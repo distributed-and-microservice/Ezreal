@@ -34,60 +34,10 @@ import java.util.Objects;
 public class EzClassLoaderFactory implements EzClassLoader {
 
     @Override
-    public ClassLoader getClassLoader(ClassLoader parentClassLoader, String... paths) {
-        List<URL> jarsToLoad = new ArrayList<>();
-        for (String folder : paths) {
-            List<String> jarPaths = scanJarFiles(folder);
+    public ClassLoader getClassLoader(ClassLoader parentClassLoader, URL pluginPath) throws MalformedURLException {
 
-            for (String jar : jarPaths) {
 
-                try {
-                    File file = new File(jar);
-                    jarsToLoad.add(file.toURI().toURL());
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        URL[] urls = new URL[jarsToLoad.size()];
-        jarsToLoad.toArray(urls);
-
-        return new URLClassLoader(urls, parentClassLoader);
+        return new URLClassLoader(new URL[]{pluginPath}, parentClassLoader);
     }
 
-    private List<String> scanJarFiles(String folderPath) {
-
-        List<String> jars = new ArrayList<>();
-        File folder = new File(folderPath);
-        if (!folder.isDirectory()) {
-            throw new RuntimeException("The file path to scan for the jars is not a directory, path:" + folderPath);
-        }
-
-        for (File f : Objects.requireNonNull(folder.listFiles())) {
-            if (!f.isFile()) {
-                continue;
-            }
-            String name = f.getName();
-
-            // check the file is a .jar file
-            if (name.length() == 0) {
-                continue;
-            }
-
-            int extIndex = name.lastIndexOf(".");
-            if (extIndex < 0) {
-                continue;
-            }
-
-            String ext = name.substring(extIndex);
-            if (!ext.equalsIgnoreCase(".jar")) {
-                continue;
-            }
-
-            jars.add(folderPath + "/" + name);
-        }
-        return jars;
-    }
 }
