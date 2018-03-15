@@ -23,6 +23,7 @@ target/
 .DS_Store
 
 !/Ezreal-core/plugin/*
+/Ezreal-core/plugin/.DS_Store
 
 
 
