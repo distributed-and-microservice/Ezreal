@@ -6,10 +6,19 @@
 
     <groupId>cn.fanhub</groupId>
     <artifactId>Ezreal</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1</version>
+    <modules>
+        <module>Ezreal-core</module>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>cn.fanhub</groupId>
+                <artifactId>Ezreal-core</artifactId>
+                <version>0.0.1</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -19,6 +28,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>1.2.29</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.16.20</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
