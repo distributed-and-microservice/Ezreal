@@ -18,11 +18,14 @@
  */
 package cn.fanhub.ezreal.core.classloader;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  *
  * @author chengfan
  * @version $Id: EzClassLoader.java, v 0.1 2018年03月15日 下午3:42 chengfan Exp $
  */
 public interface EzClassLoader {
-    ClassLoader getClassLoader(ClassLoader parentClassLoader, String...paths);
+    ClassLoader getClassLoader(ClassLoader parentClassLoader, URL pluginPath) throws MalformedURLException;
 }

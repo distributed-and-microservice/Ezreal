@@ -26,8 +26,13 @@ import cn.fanhub.ezreal.core.model.SystemParam;
 import cn.fanhub.ezreal.core.plugin.EzPlugin;
 import cn.fanhub.ezreal.core.plugin.PluginConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -59,33 +64,39 @@ public class ContainerManager {
 
     public void init() throws IOException {
         classLoaderFactory = new EzClassLoaderFactory();
-        //createPlugin(getBasePath());
+        //createPlugins(getBasePath());
     }
 
-    public void createPlugin(String basePath) throws IOException {
-
-        ClassLoader loader = classLoaderFactory.getClassLoader(ContainerManager.class.getClassLoader(), basePath);
-
-        try {
-            Properties prop = new Properties();
-            prop.load(loader.getResourceAsStream(SystemParam.CONFIG_FILE));
-            PluginConfig config = initPluginContext(prop);
+    public void createPlugins(String basePath) throws IOException {
+        for (String pluginPath : scanPluginPath(basePath)) {
+                File file = new File(pluginPath);
 
 
-            Class<?> appClass = loader.loadClass(config.getMain());
+            ClassLoader loader = classLoaderFactory.getClassLoader(ContainerManager.class.getClassLoader(), file.toURI().toURL());
+
+            try {
+                Properties prop = new Properties();
+                prop.load(loader.getResourceAsStream(SystemParam.CONFIG_FILE));
+                PluginConfig config = initPluginContext(prop);
 
 
-            EzPlugin plugin = (EzPlugin)appClass.newInstance();
-
-            plugin.init();
+                Class<?> appClass = loader.loadClass(config.getMain());
 
 
-            ContainerContext.getPlugins().put(config.getName(), plugin);
-            ContainerContext.getPluginClassloaderMap().put(config.getName(), loader);
+                EzPlugin plugin = (EzPlugin)appClass.newInstance();
 
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+                plugin.init();
+
+
+                ContainerContext.getPlugins().put(config.getName(), plugin);
+                ContainerContext.getPluginClassloaderMap().put(config.getName(), loader);
+
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
+
+
     }
 
     private PluginConfig initPluginContext(Properties prop) {
@@ -96,6 +107,40 @@ public class ContainerManager {
 
         PluginContext.getPluginConfigMap().put(config.getName(), config);
         return config;
+    }
+
+    private List<String> scanPluginPath(String pluginPath) {
+
+        List<String> plugins = new ArrayList<>();
+        File folder = new File(pluginPath);
+        if (!folder.isDirectory()) {
+            throw new RuntimeException("The file path to scan for the plugins is not a directory, path:" + pluginPath);
+        }
+
+        for (File f : Objects.requireNonNull(folder.listFiles())) {
+            if (!f.isFile()) {
+                continue;
+            }
+            String name = f.getName();
+
+            // check the file is a .jar file
+            if (name.length() == 0) {
+                continue;
+            }
+
+            int extIndex = name.lastIndexOf(".");
+            if (extIndex < 0) {
+                continue;
+            }
+
+            String ext = name.substring(extIndex);
+            if (!ext.equalsIgnoreCase(".jar")) {
+                continue;
+            }
+
+            plugins.add(pluginPath + "/" + name);
+        }
+        return plugins;
     }
 
     public String getBasePath(){
