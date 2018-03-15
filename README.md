@@ -29,7 +29,7 @@ import cn.fanhub.ezreal.core.plugin.EzPlugin;
 public class TestB implements EzPlugin {
     @Override
     public void init() {
-        System.out.println("init b");
+        System.out.println(org.apache.commons.lang3.StringUtils.upperCase("init b"));
     }
 
     @Override
@@ -89,6 +89,17 @@ ezreal.properties
 name=pluga
 version=0.1
 main=cn.fanhub.ezreal.test.TestAPlugin
+```
+
+输出：
+
+```$xslt
+init a
+INIT B
+plugb
+cn.fanhub.ezreal.testtest.TestB@20398b7c
+pluga
+cn.fanhub.ezreal.test.TestAPlugin@6fc6f14e
 ```
 
 
