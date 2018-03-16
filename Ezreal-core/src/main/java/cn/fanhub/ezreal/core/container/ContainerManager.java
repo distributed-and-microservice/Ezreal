@@ -26,10 +26,9 @@ import cn.fanhub.ezreal.core.model.SystemParam;
 import cn.fanhub.ezreal.core.plugin.EzPlugin;
 import cn.fanhub.ezreal.core.plugin.PluginConfig;
 
+
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +44,8 @@ public class ContainerManager {
     private static ContainerManager containerManager;
 
     private EzClassLoaderFactory classLoaderFactory;
+
+    private String bathPath = this.getClass().getClassLoader().getResource("").getPath();
 
     private ContainerManager(){
 
@@ -64,7 +65,7 @@ public class ContainerManager {
 
     public void init() throws IOException {
         classLoaderFactory = new EzClassLoaderFactory();
-        //createPlugins(getBasePath());
+        createPlugins(this.bathPath);
     }
 
     public void createPlugins(String basePath) throws IOException {
@@ -143,7 +144,7 @@ public class ContainerManager {
         return plugins;
     }
 
-    public String getBasePath(){
-        return this.getClass().getClassLoader().getResource("").getPath();
+    public void setBathPath(String bathPath) {
+        this.bathPath = bathPath;
     }
 }

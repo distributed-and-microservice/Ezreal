@@ -26,7 +26,7 @@ package cn.fanhub.ezreal.core.plugin;
 public interface EzPlugin {
     void init();
 
-    void execute();
+    void execute(Object ...o) throws Exception;
 
-    void destory();
+    void destroy();
 }

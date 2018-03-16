@@ -25,6 +25,9 @@ target/
 !/Ezreal-core/plugin/*
 /Ezreal-core/plugin/.DS_Store
 
+!/Ezreal-plugin-netty/plugin/*
+/Ezreal-plugin-netty/plugin/.DS_Store
+
 
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
