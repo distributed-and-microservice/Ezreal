@@ -20,6 +20,8 @@ package cn.fanhub.ezreal.plugin.netty;
 
 import cn.fanhub.ezreal.core.plugin.EzPlugin;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
@@ -48,9 +50,21 @@ public abstract class NettyInboundHandlerPlugin extends ChannelInboundHandlerAda
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf in = (ByteBuf) msg;
-        System.out.println("read:" + ctx.name() + " " + in.toString(CharsetUtil.UTF_8));
-        in.setBytes(0, new byte[]{1,2,3});
         System.out.println("plugin received: " + in.toString(CharsetUtil.UTF_8));
-        ctx.write(in);
+        ctx.fireChannelRead(in);
+    }
+
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                .addListener(ChannelFutureListener.CLOSE);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx,
+                                Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
     }
 }

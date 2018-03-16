@@ -47,26 +47,26 @@ public class TestNetty {
 
         final NettyInboundHandlerPlugin plugin = (NettyInboundHandlerPlugin) ContainerContext.getPlugins().get("pluga");
 
-        NioEventLoopGroup group = new NioEventLoopGroup(); //3
+        NioEventLoopGroup group = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(group)                                //4
-                    .channel(NioServerSocketChannel.class)        //5
-                    .localAddress(new InetSocketAddress(6789))    //6
-                    .childHandler(new ChannelInitializer<SocketChannel>() { //7
+            b.group(group)
+                    .channel(NioServerSocketChannel.class)
+                    .localAddress(new InetSocketAddress(6789))
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch)
-                                throws Exception {
-                            ch.pipeline().addLast(
-                                    new EchoServerHandler()).addFirst(plugin);
+                        public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline()
+                                .addFirst(plugin)
+                                .addLast(new EchoServerHandler());
 
                         }
                     });
 
-            ChannelFuture f = b.bind().sync();            //8
-            f.channel().closeFuture().sync();            //9
+            ChannelFuture f = b.bind().sync();
+            f.channel().closeFuture().sync();
         } finally {
-            group.shutdownGracefully().sync();            //10
+            group.shutdownGracefully().sync();
         }
     }
 
@@ -74,11 +74,11 @@ public class TestNetty {
     public void client() throws InterruptedException {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            Bootstrap b = new Bootstrap();                //1
-            b.group(group)                                //2
-                    .channel(NioSocketChannel.class)            //3
-                    .remoteAddress(new InetSocketAddress("127.0.0.1", 6789))    //4
-                    .handler(new ChannelInitializer<SocketChannel>() {    //5
+            Bootstrap b = new Bootstrap();
+            b.group(group)
+                    .channel(NioSocketChannel.class)
+                    .remoteAddress(new InetSocketAddress("127.0.0.1", 6789))
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch)
                                 throws Exception {
@@ -87,11 +87,11 @@ public class TestNetty {
                         }
                     });
 
-            ChannelFuture f = b.connect().sync();        //6
+            ChannelFuture f = b.connect().sync();
 
-            f.channel().closeFuture().sync();            //7
+            f.channel().closeFuture().sync();
         } finally {
-            group.shutdownGracefully().sync();            //8
+            group.shutdownGracefully().sync();
         }
     }
 }

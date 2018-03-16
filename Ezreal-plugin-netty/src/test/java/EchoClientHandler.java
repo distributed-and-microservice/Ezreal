@@ -29,25 +29,25 @@ import io.netty.util.CharsetUtil;
  * @author chengfan
  * @version $Id: EchoClientHandler.java, v 0.1 2018年03月16日 下午3:49 chengfan Exp $
  */
-@Sharable                                //1
+@Sharable
 public class EchoClientHandler extends
         SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!", //2
+        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
                 CharsetUtil.UTF_8));
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx,
                              ByteBuf in) {
-        System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));    //3
+        System.out.println("Client received: " + in.toString(CharsetUtil.UTF_8));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx,
-                                Throwable cause) {                    //4
+                                Throwable cause) {
         cause.printStackTrace();
         ctx.close();
     }
